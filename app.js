@@ -9,7 +9,9 @@ var usersRouter = require('./routes/users');
 var gRouter = require('./routes/grid');
 var rRouter = require('./routes/pick');
 var pRouter = require('./routes/pen');
+var pen = require("./models/pen");
 
+var resourceRouter = require('./routes/resource');
 var app = express();
 
 // view engine setup
@@ -27,6 +29,7 @@ app.use('/users', usersRouter);
 app.use('/grid', gRouter);
 app.use('/ran', rRouter);
 app.use('/pen', pRouter);
+app.use('/resource', resourceRouter);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
@@ -52,5 +55,37 @@ var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.once("open", function(){
 console.log("Connection to DB succeeded")});
+// We can seed the collection if needed on server start
+async function recreateDB(){
+// Delete everything
+await pen.deleteMany();
+let instance1 = new
+pen({pen_name:"Botco", ink:'red',
+cost:15.4});
+instance1.save().then(doc=>{
+console.log("First object saved")}
+).catch(err=>{
+console.error(err)
+});
+let instance2 = new
+pen({pen_name:"cello", ink:'blue',
+cost:14});
+instance2.save().then(doc=>{
+console.log("second object saved")}
+).catch(err=>{
+console.error(err)
+});
+let instance3 = new
+pen({pen_name:"reynolds", ink:'black',
+cost:4});
+instance3.save().then(doc=>{
+console.log("Third object saved")}
+).catch(err=>{
+console.error(err)
+});
+
+}
+let reseed = true;
+if (reseed) {recreateDB();}
 
 module.exports = app;
